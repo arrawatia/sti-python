@@ -9,6 +9,7 @@ from TwitterAPI import TwitterAPI, TwitterRestPager
 from elasticsearch import Elasticsearch
 
 from yaml import load, dump
+import json
 
 
 CONSUMER_KEY = ''
@@ -30,10 +31,9 @@ def worker():
     for item in pager.get_iterator():
         if 'text' in item:
             tweet = {}
-            tweet['coordinates'] = item['coordinates']
-            ts = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(item['created_at'],'%a %b %d %H:%M:%S +0000 %Y'))
-            tweet['@timestamp'] = ts
-            tweet['place'] = item['place']
+            # tweet['coordinates'] = item['coordinates']
+            tweet['@timestamp'] = time.mktime(time.strptime(item['created_at'],"%a %b %d %H:%M:%S +0000 %Y"))
+            # tweet['place'] = item['place']
             tweet['username'] = item['user']['name']
             tweet['handle'] = item['user']['screen_name']
             tweet['lang'] = item['lang']
@@ -81,8 +81,12 @@ if __name__ == '__main__':
     ACCESS_TOKEN_SECRET = data['ACCESS_TOKEN_SECRET']
 
     # os.environ['secret'] = str(data)
-
-    es.indices.create(index='tweets-clean', ignore=400)
+    with open('mapping.json') as mapping_file:
+    # mapping_file = open("mapping.json")
+        mapping = json.loads(mapping_file.read())
+    # mapping_file.close()
+        es.indices.delete(index="tweets")
+        es.indices.create(index='tweets', ignore=400, body=mapping)
     jobs = []
     p1 = multiprocessing.Process(target=worker)
     jobs.append(p1)
