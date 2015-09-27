@@ -6,7 +6,7 @@ from gunicorn.six import iteritems
 
 def wsgi_handler(environ, start_response):
     start_response('200 OK', [('Content-Type','text/html')])
-    ENV = [b"%30s %s <br/>" % (key,os.environ[key]) for  key in os.environ.keys()]
+    ENV = [bytes("%30s %s <br/>" % (key,os.environ[key]), "UTF-8") for  key in os.environ.keys()]
     return [b"Hello World from standalone WSGI application!</br>"] + ENV
 
 class StandaloneApplication(BaseApplication):
@@ -25,4 +25,4 @@ class StandaloneApplication(BaseApplication):
         return self.application
 
 if __name__ == '__main__':
-    StandaloneApplication(wsgi_handler, {'bind': ':8080'}).run()
+    StandaloneApplication(wsgi_handler, {'bind': ':8088'}).run()
