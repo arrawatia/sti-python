@@ -8,10 +8,13 @@ import time
 from TwitterAPI import TwitterAPI, TwitterRestPager
 from elasticsearch import Elasticsearch
 
-CONSUMER_KEY = 'RAnytlvuGtSwPZggY6u5dSjKR'
-CONSUMER_SECRET = 'zSRxICAPZngI7f5CjNXOoWfdYJCHnorowrndSLFNwEJgl4yHQW'
-ACCESS_TOKEN_KEY = '23294783-zXL9G9k4sWY0RjigunHK8m3GOHpgwh2Xg0Lvvssop'
-ACCESS_TOKEN_SECRET = 'VjMExv0hOZuCDCrrw2RDX0Hfo6AlyEb4p7l8jPDsaWRAq'
+from yaml import load, dump
+
+
+CONSUMER_KEY = ''
+CONSUMER_SECRET = ''
+ACCESS_TOKEN_KEY = ''
+ACCESS_TOKEN_SECRET = ''
 
 SEARCH_TERM = 'docker'
 
@@ -26,9 +29,19 @@ def worker():
     pager = TwitterRestPager.TwitterRestPager(api, 'search/tweets', {'q': SEARCH_TERM})
     for item in pager.get_iterator():
         if 'text' in item:
-            es.index(index="tweets", doc_type="tweet", body=item)
-        else:
-            es.index(index="tweets", doc_type="message", body=item)
+            tweet = {}
+            tweet['coordinates'] = item['coordinates']
+            tweet['created_at'] = item['created_at']
+            tweet['place'] = item['place']
+            tweet['username'] = item['user']['name']
+            tweet['handle'] = item['user']['screen_name']
+            tweet['lang'] = item['lang']
+            tweet['timezone'] = item['user']['timezone']
+            tweet['followers'] = item['user']['followers_count']
+            tweet['location'] = item['user']['location']
+            tweet['retweeted'] = item['retweeted']
+            tweet['text'] = item['text']
+            es.index(index="tweets", doc_type="tweet", body=tweet)
     return
 
 def wsgi_handler(environ, start_response):
@@ -57,6 +70,12 @@ def webapp():
     StandaloneApplication(wsgi_handler, {'bind': ':8080'}).run()
 
 if __name__ == '__main__':
+    api_key = open('/etc/secret-volume/app-secret')
+    data = load(api_key)
+    api_key.close()
+    print(data)
+    os.environ['secret'] = str(data)
+
     es.indices.create(index='tweets', ignore=400)
     jobs = []
     p1 = multiprocessing.Process(target=worker)
