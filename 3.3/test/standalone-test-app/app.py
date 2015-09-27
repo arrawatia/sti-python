@@ -31,12 +31,12 @@ def worker():
         if 'text' in item:
             tweet = {}
             tweet['coordinates'] = item['coordinates']
-            tweet['created_at'] = item['created_at']
+            tweet['@timestamp'] = time.mktime(time.strptime(item['created_at'],"%a %b %d %H:%M:%S +0000 %Y"))
             tweet['place'] = item['place']
             tweet['username'] = item['user']['name']
             tweet['handle'] = item['user']['screen_name']
             tweet['lang'] = item['lang']
-            tweet['timezone'] = item['user']['timezone']
+            tweet['timezone'] = item['user']['time_zone']
             tweet['followers'] = item['user']['followers_count']
             tweet['location'] = item['user']['location']
             tweet['retweeted'] = item['retweeted']
@@ -79,9 +79,9 @@ if __name__ == '__main__':
     ACCESS_TOKEN_KEY = data['ACCESS_TOKEN_KEY']
     ACCESS_TOKEN_SECRET = data['ACCESS_TOKEN_SECRET']
 
-    os.environ['secret'] = str(data)
+    # os.environ['secret'] = str(data)
 
-    es.indices.create(index='tweets', ignore=400)
+    es.indices.create(index='tweets-clean', ignore=400)
     jobs = []
     p1 = multiprocessing.Process(target=worker)
     jobs.append(p1)
