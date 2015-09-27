@@ -32,8 +32,10 @@ def worker():
         if 'text' in item:
             tweet = {}
             # tweet['coordinates'] = item['coordinates']
-            tweet['@timestamp'] = time.mktime(time.strptime(item['created_at'],"%a %b %d %H:%M:%S +0000 %Y"))
+            # tweet['@timestamp'] = time.mktime(time.strptime(item['created_at'],"%a %b %d %H:%M:%S +0000 %Y"))
             # tweet['place'] = item['place']
+            ts = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(item['created_at'],'%a %b %d %H:%M:%S +0000 %Y'))
+            tweet['@timestamp'] = ts
             tweet['username'] = item['user']['name']
             tweet['handle'] = item['user']['screen_name']
             tweet['lang'] = item['lang']
