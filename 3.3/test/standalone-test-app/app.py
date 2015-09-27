@@ -54,7 +54,7 @@ class StandaloneApplication(BaseApplication):
         return self.application
 
 def webapp():
-    StandaloneApplication(wsgi_handler, {'bind': ':8088'}).run()
+    StandaloneApplication(wsgi_handler, {'bind': ':8080'}).run()
 
 if __name__ == '__main__':
     es.indices.create(index='tweets', ignore=400)
