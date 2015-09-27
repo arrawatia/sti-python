@@ -70,11 +70,11 @@ def webapp():
     StandaloneApplication(wsgi_handler, {'bind': ':8080'}).run()
 
 if __name__ == '__main__':
-    api_key = open('/etc/secret-volume/app-secret')
-    data = load(api_key)
-    api_key.close()
-    print(data)
-    os.environ['secret'] = str(data)
+    # api_key = open('/etc/secret-volume/app-secret')
+    # data = load(api_key)
+    # api_key.close()
+    # print(data)
+    # os.environ['secret'] = str(data)
 
     es.indices.create(index='tweets', ignore=400)
     jobs = []
