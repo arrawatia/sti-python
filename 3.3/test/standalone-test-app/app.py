@@ -52,8 +52,9 @@ def wsgi_handler(environ, start_response):
     start_response('200 OK', [('Content-Type','text/html')])
     stats = es.indices.stats(index="tweets", human=True)
     num_tweets = stats["_all"]["primaries"]["docs"]["count"]
+    KIBANA = [bytes('<iframe src="http://route-zeta-kibana.elk-test.apps.demo.os.quantezza.com/#/dashboard/New-Dashboard?embed&_a=(filters:!(),panels:!((col:1,id:%23-Tweets,row:1,size_x:3,size_y:2,type:visualization),(col:4,id:by-location,row:1,size_x:3,size_y:2,type:visualization),(col:7,id:Tweets-by-lang,row:1,size_x:3,size_y:2,type:visualization),(col:1,columns:!(followers,handle,lang,location,retweeted,text,timezone,username),id:all-tweets,row:3,size_x:12,size_y:4,sort:!('@timestamp',desc),type:search)),query:(query_string:(analyze_wildcard:!t,query:'*')),title:'New%20Dashboard')&_g=(refreshInterval:(display:'1%20minute',pause:!f,section:2,value:60000),time:(from:now%2Fd,mode:quick,to:now%2Fd))" height="600" width="800"></iframe>', "UTF-8")]
     ENV = [bytes("%30s %s <br/>" % (key,os.environ[key]), "UTF-8") for  key in os.environ.keys()]
-    return [bytes("Tweets = %s <br/><br/>" % (num_tweets, ), "UTF-8")] + ENV
+    return [bytes("Tweets = %s <br/><br/>" % (num_tweets, ), "UTF-8")] + KIBANA + ENV
 
 class StandaloneApplication(BaseApplication):
     def __init__(self, app, options=None):
