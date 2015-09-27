@@ -25,4 +25,4 @@ class StandaloneApplication(BaseApplication):
         return self.application
 
 if __name__ == '__main__':
-    StandaloneApplication(wsgi_handler, {'bind': ':8088'}).run()
+    StandaloneApplication(wsgi_handler, {'bind': ':8080'}).run()
