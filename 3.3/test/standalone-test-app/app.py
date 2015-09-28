@@ -17,7 +17,7 @@ CONSUMER_SECRET = ''
 ACCESS_TOKEN_KEY = ''
 ACCESS_TOKEN_SECRET = ''
 
-SEARCH_TERM = 'docker'
+SEARCH_TERM = 'pizza'
 
 es = Elasticsearch(os.environ["ES_URL"])
 
@@ -73,9 +73,12 @@ class StandaloneApplication(BaseApplication):
 
 def webapp():
     StandaloneApplication(wsgi_handler, {'bind': ':8080'}).run()
+    # StandaloneApplication(wsgi_handler, {'bind': ':8088'}).run()
 
 if __name__ == '__main__':
+
     api_key = open('/etc/secret-volume/twitter-secret.yaml')
+    # api_key = open('/Users/arrawatia/code/try-openshift/template/twitter-secret.yaml')
     data = load(api_key)
     api_key.close()
     print(data)
